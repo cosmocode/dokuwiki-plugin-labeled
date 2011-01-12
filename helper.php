@@ -36,7 +36,7 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
 
             $color = ($active)?$opts['color']:'aaa';
 
-            echo '<li class="labeled_'.($active?'':'in').'active" style="border-color:#'.$color.'">';
+            echo '<li class="labeled_'.($active?'':'in').'active" style="border-color:'.$color.'">';
             if ($edit) {
                 $link = wl($ID,
                     array(
@@ -46,7 +46,7 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
                     )
                 );
                 $title = '';
-                printf('<a href="%s" title="%s"  style="color:#'.$color.'">', $link, $title);
+                printf('<a href="%s" title="%s"  style="color:'.$color.'">', $link, $title);
             }
             echo hsc($label);
 
@@ -62,6 +62,7 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
      * parse a string of tags.
      * @param string $tags
      * @return array single tags as array.
+     * FIXME can be deleted?
      */
     public function parseLabels($labels) {
         $labels = explode(',', $labels);
@@ -83,7 +84,15 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
             if (!$this->labelExists($label)) continue;
             $db->query('INSERT INTO labeled (id, label) VALUES (?,?)', $id, $label);
         }
+    }
 
+    public function changeColor($label, $newColor) {
+        global $ID;
+        if (auth_quickaclcheck($ID) < AUTH_ADMIN) {
+            return false;
+        }
+        $db = $this->getDb();
+        $db->query('UPDATE labels SET color=? WHERE name=?', $newColor, $label);
     }
 
     /**
@@ -105,6 +114,9 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
      * @return void
      */
     private function deleteLabels($id) {
+        if (auth_quickaclcheck($id) < AUTH_ADMIN) {
+            return false;
+        }
         $db = $this->getDb();
         $db->query('DELETE FROM labeled WHERE id=?', $id);
     }
@@ -121,6 +133,23 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
         $labels = array_unique($labels);
 
         $this->setLabels($labels, $id);
+    }
+
+    /**
+     * rename a label
+     * @param string $label old label name
+     * @param string $newLabel new label name
+     */
+    public function renameLabel($label, $newName) {
+        global $ID;
+        if (auth_quickaclcheck($ID) < AUTH_ADMIN) {
+            return false;
+        }
+        if (!$this->labelExists($label)) return;
+        $db = $this->getDb();
+        $db->query('UPDATE labels set name=? WHERE name=?', $newName, $label);
+        $db->query('UPDATE labeled set label=? WHERE label=?', $newName, $label);
+
     }
 
     /**
@@ -149,16 +178,17 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
      * @param string $label label to check
      * @return boolean true if exists
      */
-    private function labelExists($label) {
+    public function labelExists($label) {
         $labels = $this->getAllLabels();
         return isset($labels[$label]);
     }
 
     /**
      * @return array get an array of all available labels
+     * @param boolean $reload on true force a reload
      */
-    public function getAllLabels() {
-        if ($this->labels !== null) return $this->labels;
+    public function getAllLabels($reload = false) {
+        if ($this->labels !== null && !$reload) return $this->labels;
 
         $db = $this->getDb();
         $res = $db->query('SELECT name, color, namespace FROM labels');
@@ -178,7 +208,6 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
      * @param string $name  new name of the label
      * @param string $color hex color of the label
      * @param string $ns    namespace filter for the label
-     * @todo check color
      */
     public function createLabel($name, $color, $ns = '') {
         global $ID;
