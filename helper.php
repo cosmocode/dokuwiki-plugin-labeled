@@ -113,8 +113,9 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
      * @return void
      */
     private function deleteLabels($id) {
-        global $INFO;
-        if (!$INFO['isadmin']) return;
+        if (auth_quickaclcheck($id) < AUTH_EDIT) {
+            return false;
+        }
 
         $db = $this->getDb();
         $db->query('DELETE FROM labeled WHERE id=?', $id);
