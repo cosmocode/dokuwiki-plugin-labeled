@@ -1,0 +1,24 @@
+.plugin_labeled li {
+    text-decoration:none;
+    border-style: solid;
+    margin: .5em 0;
+    border-radius: .5em;
+    -moz-border-radius: .5em;
+    -webkit-border-radius: .5em;
+    list-style-type:none;
+}
+
+.plugin_labeled li.labeled_inactive {
+    border-width: 1px;
+    padding: 6px;
+}
+
+.plugin_labeled li.labeled_active {
+    font-weight: bold;
+    border-width: 3px;
+    padding:4px;
+}
+
+.plugin_labeled li a {
+    display:block;
+}
