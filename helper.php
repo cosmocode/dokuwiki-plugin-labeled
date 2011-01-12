@@ -87,10 +87,9 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
     }
 
     public function changeColor($label, $newColor) {
-        global $ID;
-        if (auth_quickaclcheck($ID) < AUTH_ADMIN) {
-            return false;
-        }
+        global $INFO;
+        if (!$INFO['isadmin']) return;
+
         $db = $this->getDb();
         $db->query('UPDATE labels SET color=? WHERE name=?', $newColor, $label);
     }
@@ -114,9 +113,9 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
      * @return void
      */
     private function deleteLabels($id) {
-        if (auth_quickaclcheck($id) < AUTH_ADMIN) {
-            return false;
-        }
+        global $INFO;
+        if (!$INFO['isadmin']) return;
+
         $db = $this->getDb();
         $db->query('DELETE FROM labeled WHERE id=?', $id);
     }
@@ -141,10 +140,9 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
      * @param string $newLabel new label name
      */
     public function renameLabel($label, $newName) {
-        global $ID;
-        if (auth_quickaclcheck($ID) < AUTH_ADMIN) {
-            return false;
-        }
+        global $INFO;
+        if (!$INFO['isadmin']) return;
+
         if (!$this->labelExists($label)) return;
         $db = $this->getDb();
         $db->query('UPDATE labels set name=? WHERE name=?', $newName, $label);
@@ -210,10 +208,8 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
      * @param string $ns    namespace filter for the label
      */
     public function createLabel($name, $color, $ns = '') {
-        global $ID;
-        if (auth_quickaclcheck($ID) < AUTH_ADMIN) {
-            return;
-        }
+        global $INFO;
+        if (!$INFO['isadmin']) return;
 
         if ($this->labelExists($name)) return;
 
@@ -227,10 +223,8 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
      * @param string $label label to delete
      */
     public function deleteLabel($label) {
-        global $ID;
-        if (auth_quickaclcheck($ID) < AUTH_ADMIN) {
-            return;
-        }
+        global $INFO;
+        if (!$INFO['isadmin']) return;
 
         $db = $this->getDb();
         $db->query('DELETE FROM labels WHERE name=?', $label);
