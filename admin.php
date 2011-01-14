@@ -15,13 +15,14 @@ class admin_plugin_labeled extends DokuWiki_Admin_Plugin {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (checkSecurityToken()) {
-                if (isset($_REQUEST['action']['delete'])) {
+                if (isset($_POST['action']['delete'])) {
                    $this->delLabel();
                 }
-                if (isset($_REQUEST['action']['create'])) {
+                if (isset($_POST['action']['create'])) {
                     $this->create();
-                } else if (isset($_REQUEST['action']['save'])) {
+                } else if (isset($_POST['action']['save'])) {
                     $this->applyChanges();
+                    $this->create(true);
                 }
             }
         }
@@ -33,8 +34,11 @@ class admin_plugin_labeled extends DokuWiki_Admin_Plugin {
         include dirname(__FILE__) . '/admin_tpl.php';
     }
 
+    /**
+     * Try to delete a label
+     */
     private function delLabel() {
-        $labels = array_keys($_REQUEST['action']['delete']);
+        $labels = array_keys($_POST['action']['delete']);
         foreach ($labels as $label) {
             $this->hlp->deleteLabel($label);
         }
@@ -44,9 +48,9 @@ class admin_plugin_labeled extends DokuWiki_Admin_Plugin {
     private function applyChanges() {
         $labels = $this->hlp->getAllLabels();
 
-        if (!isset($_REQUEST['labels'])) return; // nothing to do
+        if (!isset($_POST['labels'])) return; // nothing to do
 
-        foreach ($_REQUEST['labels'] as $oldName => $newValues) {
+        foreach ($_POST['labels'] as $oldName => $newValues) {
 
             // apply color
             if ($labels[$oldName]['color'] != $newValues['color']) {
@@ -74,21 +78,26 @@ class admin_plugin_labeled extends DokuWiki_Admin_Plugin {
     /**
      * create a label using the request parameter
      */
-    private function create() {
-        if (!isset($_REQUEST['newlabel'])) {
-            msg($this->getLang('no input'), -1);
+    private function create($applyMode = false) {
+        if (!isset($_POST['newlabel'])) {
+            if (!$applyMode) msg($this->getLang('no input'), -1);
             return;
         }
-        if (!isset($_REQUEST['newlabel']['name'])) {
+
+        if ($applyMode && !isset($_POST['newlabel']['name']) && !isset($_POST['newlabel']['color'])) {
+            return; // silently exit
+        }
+
+        if (!isset($_POST['newlabel']['name'])) {
             msg($this->getLang('no name', -1));
             return;
         }
-        $name = $_REQUEST['newlabel']['name'];
-        if (!isset($_REQUEST['newlabel']['color'])) {
+        $name = $_POST['newlabel']['name'];
+        if (!isset($_POST['newlabel']['color'])) {
             msg($this->getLang('no color', -1));
             return;
         }
-        $color = $_REQUEST['newlabel']['color'];
+        $color = $_POST['newlabel']['color'];
 
         if (!$this->validateName($name)) {
             return;
