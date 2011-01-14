@@ -1,7 +1,7 @@
 .plugin_labeled li {
     text-decoration:none;
     border-style: solid;
-    margin: .5em 0;
+    margin: .5em 3em .5em 1.5em;
     border-radius: .5em;
     -moz-border-radius: .5em;
     -webkit-border-radius: .5em;
@@ -11,14 +11,26 @@
 .plugin_labeled li.labeled_inactive {
     border-width: 1px;
     padding: 6px;
+    border-color: #ccc;
+    color: #ccc;
 }
 
 .plugin_labeled li.labeled_active {
+    border-width: 0;
+    padding:7px;
+    background-color: #9c9;
+    color:#fff;
     font-weight: bold;
-    border-width: 3px;
-    padding:4px;
 }
 
 .plugin_labeled li a {
     display:block;
+}
+
+div.dokuwiki .plugin_labeled ul li.labeled_active a {
+    color: #fff;
+}
+
+div.dokuwiki .plugin_labeled ul li.labeled_inactive a {
+    color: #ccc;
 }

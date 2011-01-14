@@ -36,7 +36,7 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
 
             $color = ($active)?$opts['color']:'aaa';
 
-            echo '<li class="labeled_'.($active?'':'in').'active" style="border-color:'.$color.'">';
+            echo '<li class="labeled_'.($active?'':'in').'active" style="border-color:'.$color.';background-color:'.$color.'">';
             if ($edit) {
                 $link = wl($ID,
                     array(
@@ -46,7 +46,7 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
                     )
                 );
                 $title = '';
-                printf('<a href="%s" title="%s"  style="color:'.$color.'">', $link, $title);
+                printf('<a href="%s" title="%s">', $link, $title);
             }
             echo hsc($label);
 
