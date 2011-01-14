@@ -61,6 +61,14 @@ class admin_plugin_labeled extends DokuWiki_Admin_Plugin {
                 }
             }
 
+            // apply order number
+            if ($labels[$oldName]['ordernr'] != $newValues['order']) {
+                $this->hlp->changeOrder($oldName, $newValues['order']);
+            } else if (empty($newValues['order'])) {
+                $this->hlp->changeOrder($oldName, 2147483647);
+                $labels = $this->hlp->getAllLabels();
+            }
+
             // apply renaming
             if ($oldName !== $newValues['name'] && !empty($newValues['name'])) {
                 if ($this->validateName($newValues['name'])) {
@@ -79,36 +87,27 @@ class admin_plugin_labeled extends DokuWiki_Admin_Plugin {
      * create a label using the request parameter
      */
     private function create($applyMode = false) {
-        if (!isset($_POST['newlabel'])) {
-            if (!$applyMode) msg($this->getLang('no input'), -1);
-            return;
-        }
+        if (!isset($_POST['newlabel'])) return;
 
-        if ($applyMode && !isset($_POST['newlabel']['name']) && !isset($_POST['newlabel']['color'])) {
-            return; // silently exit
-        }
+        $name = (isset($_POST['newlabel']['name']))?$_POST['newlabel']['name']:'';
+        $color = (isset($_POST['newlabel']['color']))?$_POST['newlabel']['color']:'';
+        $order = (isset($_POST['newlabel']['order']))?$_POST['newlabel']['order']:'';
 
-        if (!isset($_POST['newlabel']['name'])) {
-            msg($this->getLang('no name', -1));
-            return;
-        }
-        $name = $_POST['newlabel']['name'];
-        if (!isset($_POST['newlabel']['color'])) {
-            msg($this->getLang('no color', -1));
-            return;
-        }
-        $color = $_POST['newlabel']['color'];
+        if (empty($order)) $order = 2147483647; // maxint - last element
+        $order = floatval($order);
+
+        if ($applyMode && empty($name) && empty($color)) return;
 
         if (!$this->validateName($name)) {
             return;
         }
 
         if (!$this->validateColor($color)) {
-            msg($this->getLang('invalid color', -1));
             return;
         }
 
         $this->hlp->createLabel($name, $color);
+        $this->hlp->changeOrder($name, $order);
         msg($this->getLang('label created'));
         $this->hlp->getAllLabels(true);
     }
@@ -119,7 +118,11 @@ class admin_plugin_labeled extends DokuWiki_Admin_Plugin {
      * @return boolean true if the color is correct
      */
     private function validateColor($color) {
-        return preg_match('/^#[0-9a-f]{3}([0-9a-f]{3})?$/i', $color) == 1;
+        if (!preg_match('/^#[0-9a-f]{3}([0-9a-f]{3})?$/i', $color)) {
+            msg($this->getLang('invalid color', -1));
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -128,7 +131,15 @@ class admin_plugin_labeled extends DokuWiki_Admin_Plugin {
      * @return boolean true if everything is correct
      */
     private function validateName($name) {
-        return !$this->hlp->labelExists($name);
+        if ($this->hlp->labelExists($name)) {
+            msg($this->getLang('label already exists', -1));
+            return false;
+        }
+        if (empty($name)) {
+            msg($this->getLang('no name', 1));
+            return false;
+        }
+        return true;
     }
 
 }

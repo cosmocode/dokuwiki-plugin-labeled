@@ -15,6 +15,7 @@ $lang['admin action'] = "Aktion";
 $lang['admin create'] = "Label erstellen";
 $lang['admin delete'] = "Label löschen";
 $lang['admin save'] = "Änderungen speichern";
+$lang['admin order'] = 'Reihenfolge';
 
 $lang['no input'] = 'Es konnte kein Label erstellt werden, da keine Daten eingegeben wurden.';
 $lang['no name'] = 'Sie müssen einen Labelnamen eingeben.';

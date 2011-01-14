@@ -1,6 +1,3 @@
-<?php
-$label = hsc($label);
-?>
 <h1><?php echo $this->getLang('admin headline')?></h1>
 
 <form action="doku.php" method="post">
@@ -15,14 +12,17 @@ $label = hsc($label);
     <tr>
         <th><?php echo $this->getLang('admin label name')?></th>
         <th><?php echo $this->getLang('admin label color')?></th>
+        <th><?php echo $this->getLang('admin order')?></th>
         <th><?php echo $this->getLang('admin action')?></th>
     </tr>
     <tr>
         <td><input type="text" name="newlabel[name]" class="edit" /></td>
         <td><input type="" name="newlabel[color]" class="edit" /></td>
+        <td><input type="" name="newlabel[order]" class="edit" /></td>
         <td><input type="submit" class="button" name="action[create]" value="<?php echo $this->getLang('admin create')?>" /></td>
     </tr>
 <?php foreach ($labels as $label => $opts): ?>
+<?php $label = hsc($label); ?>
     <tr>
         <td>
             <input class="edit" type="text" value="<?php echo $label ?>" name="labels[<?php echo $label ?>][name]" />
@@ -30,6 +30,9 @@ $label = hsc($label);
         <td>
             <input class="edit" style="color: <?php echo $opts['color'] ?>" type="text"
                 value="<?php echo $opts['color'] ?>" name="labels[<?php echo $label ?>][color]" />
+        </td>
+        <td>
+            <input class="edit" type="text" value="<?php echo $opts['ordernr'] ?>" name="labels[<?php echo $label ?>][order]" />
         </td>
         <td>
             <input type="submit" name="action[delete][<?php echo $label ?>]" class="button"

@@ -190,7 +190,7 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
         if ($this->labels !== null && !$reload) return $this->labels;
 
         $db = $this->getDb();
-        $res = $db->query('SELECT name, color, namespace FROM labels');
+        $res = $db->query('SELECT name, color, namespace, ordernr FROM labels ORDER BY ordernr');
 
         $labels = $db->res2arr($res);
 
@@ -203,12 +203,46 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
     }
 
     /**
-     * create a new label
-     * @param string $name  new name of the label
-     * @param string $color hex color of the label
-     * @param string $ns    namespace filter for the label
+     * Change the order of the labels
+     *
+     * @param string $name label name to change
+     * @param float $order ordering number
      */
-    public function createLabel($name, $color, $ns = '') {
+    public function changeOrder($name, $order) {
+        global $INFO;
+        if (!$INFO['isadmin']) return;
+        if ($order === '') $order = 2147483647;
+        $db = $this->getDb();
+
+        $labels = $this->getAllLabels(true);
+        $labels[$name]['ordernr'] = $order;
+        uasort($labels, array($this, 'cmpOrder'));
+
+        $keys = array_keys($labels);
+        $kc = count($keys);
+        for ($i=0; $i<$kc; $i++) {
+            if ($labels[$keys[$i]]['ordernr'] == ($i+1)) {
+                continue;
+            }
+            $labels[$keys[$i]]['ordernr'] = $i+1;
+            $db->query('UPDATE labels SET ordernr=? WHERE name=?', ($i+1), $keys[$i]);
+        }
+        $this->getAllLabels(true);
+    }
+
+    public function cmpOrder($a, $b) {
+        if ($a['ordernr'] == $b['ordernr']) return 0;
+        return ($a['ordernr'] > $b['ordernr']) ? 1 : -1;
+    }
+
+    /**
+     * create a new label
+     * @param string $name   new name of the label
+     * @param string $color  hex color of the label
+     * @param boolean $order Ordering number
+     * @param string $ns     namespace filter for the label
+     */
+    public function createLabel($name, $color, $order = false, $ns = '') {
         global $INFO;
         if (!$INFO['isadmin']) return;
 

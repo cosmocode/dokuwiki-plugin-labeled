@@ -15,6 +15,7 @@ $lang['admin action'] = "Action";
 $lang['admin create'] = "create label";
 $lang['admin delete'] = "delete label";
 $lang['admin save'] = "Save changes";
+$lang['admin order'] = 'Order';
 
 $lang['no input'] = 'You have to enter the label information.';
 $lang['no name'] = 'You have to enter the label name.';
