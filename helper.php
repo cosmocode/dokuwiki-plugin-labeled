@@ -26,8 +26,10 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
     public function tpl_labels() {
         global $ID;
         $all = $this->getAllLabels();
+        if (count($all) === 0) return false;
         $current = $this->getLabels($ID);
-        echo '<div class="plugin_labeled"><ul>';
+        $result = '';
+        $result .=  '<div class="plugin_labeled"><ul>';
 
         $edit = auth_quickaclcheck($ID) >= AUTH_EDIT;
         foreach ($all as $label => $opts) {
@@ -36,7 +38,7 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
 
             $color = ($active)?$opts['color']:'aaa';
 
-            echo '<li class="labeled_'.($active?'':'in').'active" style="border-color:'.$color.';background-color:'.$color.'">';
+            $result .=  '<li class="labeled_'.($active?'':'in').'active" style="border-color:'.$color.';background-color:'.$color.'">';
             if ($edit) {
                 $link = wl($ID,
                     array(
@@ -46,16 +48,16 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
                     )
                 );
                 $title = '';
-                printf('<a href="%s" title="%s">', $link, $title);
+                $result .= sprintf('<a href="%s" title="%s">', $link, $title);
             }
-            echo hsc($label);
+            $result .=  hsc($label);
 
-            if ($edit) echo '</a>';
-            echo '</li>';
+            if ($edit) $result .=  '</a>';
+            $result .=  '</li>';
         }
 
-        echo '</ul></div>';
-
+        $result .=  '</ul></div>';
+        return $result;
     }
 
     /**
