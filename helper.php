@@ -50,7 +50,7 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
                 $title = '';
                 $result .= sprintf('<a href="%s" title="%s">', $link, $title);
             }
-            $result .=  hsc($label);
+            $result .=  hsc($this->getLabelLanguage($label));
 
             if ($edit) $result .=  '</a>';
             $result .=  '</li>';
@@ -58,6 +58,26 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
 
         $result .=  '</ul></div>';
         return $result;
+    }
+
+    /**
+     * check if conf/lang/.../labeled.php exists and languages for param label name is set
+     * @param string $label name
+     * @return string translated label name
+     */
+    public function getLabelLanguage($label) {
+
+        global $conf;
+
+        if (isset($conf['lang'])) {
+            $path = DOKU_INC.'conf/lang/'.$conf['lang'].'/labeled.php';
+            if (file_exists($path)) {
+                @include_once($path);
+                return (isset($lang[$label])) ? $lang[$label] : $label;
+            }
+        }
+
+        return $label;
     }
 
     /**
