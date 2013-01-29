@@ -1,6 +1,6 @@
 <h1><?php echo $this->getLang('admin headline')?></h1>
 
-<form action="doku.php" method="post">
+<form action="<?php echo script()?>" method="post">
     <div class="no">
         <input type="hidden" name="do" value="admin" />
         <input type="hidden" name="page" value="labeled" />

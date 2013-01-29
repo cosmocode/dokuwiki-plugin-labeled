@@ -5,8 +5,7 @@ if(!defined('DOKU_INC')) die();
 class helper_plugin_labeled extends DokuWiki_Plugin {
 
     private $labels = null;
-
-    var $lang_translation = null;
+    private $lang_translation = null;
 
     function __construct() {
         global $conf;
