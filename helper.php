@@ -5,6 +5,18 @@ if(!defined('DOKU_INC')) die();
 class helper_plugin_labeled extends DokuWiki_Plugin {
 
     private $labels = null;
+    private $lang_translation = null;
+
+    function __construct() {
+        global $conf;
+        if (isset($conf['lang'])) {
+            $path = DOKU_INC.'conf/lang/'.$conf['lang'].'/labeled.php';
+            if (file_exists($path)) {
+                @include($path);
+                $this->lang_translation = $lang;
+            }
+        }
+    }
 
     function getDB() {
         static $db;
@@ -50,7 +62,7 @@ class helper_plugin_labeled extends DokuWiki_Plugin {
                 $title = '';
                 $result .= sprintf('<a href="%s" title="%s">', $link, $title);
             }
-            $result .=  hsc($label);
+            $result .=  hsc((isset($this->lang_translation[$label])) ? $this->lang_translation[$label] : $label);
 
             if ($edit) $result .=  '</a>';
             $result .=  '</li>';
