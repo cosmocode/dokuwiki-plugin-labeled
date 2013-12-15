@@ -1,4 +1,8 @@
 <?php
+/**
+ * German language file
+ *
+ */
 
 // settings must be present and set appropriately for the language
 $lang['encoding']   = 'utf-8';
@@ -22,8 +26,6 @@ $lang['no name'] = 'Sie müssen einen Labelnamen eingeben.';
 $lang['no color'] = 'Sie müssen eine Labelfarbe angeben.';
 $lang['label already exists'] = 'Es existiert bereits ein label mit diesem namen.';
 $lang['invalid color'] = 'Die angegebene Farbe ist ungültig. Bitte benutzen sie einen Farbcode wie z.B. #ff0000.';
+
 $lang['label deleted'] = 'Label gelöscht';
-
 $lang['label created'] = 'Label erstellt';
-
-

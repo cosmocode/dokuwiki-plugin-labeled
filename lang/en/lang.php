@@ -1,4 +1,8 @@
 <?php
+/**
+ * English language file
+ *
+ */
 
 // settings must be present and set appropriately for the language
 $lang['encoding']   = 'utf-8';
@@ -22,9 +26,7 @@ $lang['no name'] = 'You have to enter the label name.';
 $lang['no color'] = 'You have to set a label color.';
 $lang['label already exists'] = 'The given label name already exists.';
 $lang['invalid color'] = 'The color given is invalid (valid is ie. #ff0000 for red)';
-$lang['label deleted'] = 'Label deleted.';
 
+$lang['label deleted'] = 'Label deleted';
 $lang['label created'] = 'Label created';
 $lang['wrong sectok'] = 'Wrong security token! please try again.';
-
-
