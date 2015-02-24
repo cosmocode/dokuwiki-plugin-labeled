@@ -1,7 +1,7 @@
 base   labeled
 author Dominik Eckelmann
 email  dokuwiki@cosmocode.de
-date   2013-01-30
+date   2013-12-15
 name   labeled plugin
 desc   Label dokuwiki pages.
 url    http://www.dokuwiki.org/plugin:labeled
